@@ -45,6 +45,35 @@ naif_tail
   
   return 0;
 }
+
+void tail_utile(const char* file, const int lignes) {
+  char tampon[10][LINE_MAX]; /* 10: nombre arbitraire, toujours ISO C90 */
+  char octet;
+  int flux,indice = 0,j = 0,k = 0;
+
+  assert((flux = open(file,O_RDONLY)) != -1);
+  while(read(flux, &octet, sizeof(char)) == 1) {
+    tampon[indice][j++] = octet;
+    if(octet == '\n') {
+      tampon[indice][j]='\0'; 
+      indice = ((indice + 1)%lignes); 
+      j=0;
+    }
+  }
+
+  for(j = 0; j < lignes ; j++) {
+    k = 0;
+    octet = tampon[indice][k];
+    while (octet != '\0' && octet != EOF) {
+      octet = tampon[indice][k];
+      write(STDIN_FILENO,&octet,sizeof(char));
+      k++;
+    }
+    indice = (indice + 1)%lignes;
+  }
+
+  close(flux);
+}
  
 int
 index_tail_buffer
