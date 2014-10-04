@@ -45,6 +45,20 @@ naif_tail
   
   return 0;
 }
+
+/* Compile pas encore, ISO C90 en mousse... */
+void tail_utile(const char* file, const int lignes) {
+  char tampon[lignes][LINE_MAX];
+  char octet;
+  int flux,indice = 0,j = 0;
+  assert((flux = open(file,O_RDONLY)) != -1);
+  while(read(flux, &octet, sizeof(char)) == 1) {
+    tampon[indice][j++]=octet;
+    if(octet == '\n') {indice = ((indice + 1)%lignes); j=0;}
+  }
+  close(flux);
+  write(STDIN_FILENO,tampon[indice-1],LINE_MAX);
+}
  
 int
 index_tail_buffer
