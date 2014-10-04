@@ -46,18 +46,37 @@ naif_tail
   return 0;
 }
 
-/* Compile pas encore, ISO C90 en mousse... */
 void tail_utile(const char* file, const int lignes) {
-  char tampon[lignes][LINE_MAX];
+  char tampon[LINE_MAX][LINE_MAX]; /* Nombre arbitraire, à préciser dans le README */
   char octet;
-  int flux,indice = 0,j = 0;
+  int flux,indice = 0,j = 0,k = 0;
+
   assert((flux = open(file,O_RDONLY)) != -1);
+
+  /* Ecriture de chaque ligne dans chaque case du tableau tampon.
+   Les lignes "inutiles" sont écrasées */
   while(read(flux, &octet, sizeof(char)) == 1) {
-    tampon[indice][j++]=octet;
-    if(octet == '\n') {indice = ((indice + 1)%lignes); j=0;}
+    tampon[indice][j++] = octet;
+    if(octet == '\n') {
+      tampon[indice][j]='\0'; 
+      indice = ((indice + 1)%lignes); 
+      j=0;
+    }
   }
+
+  /* Affichage des lignes, case par case de tampon */
+  for(j = 0; j < lignes ; j++) {
+    k = 0;
+    octet = tampon[indice][k];
+    while (octet != '\0' && octet != EOF) {
+      octet = tampon[indice][k];
+      write(STDIN_FILENO,&octet,sizeof(char));
+      k++;
+    }
+    indice = (indice + 1)%lignes;
+  }
+
   close(flux);
-  write(STDIN_FILENO,tampon[indice-1],LINE_MAX);
 }
  
 int
