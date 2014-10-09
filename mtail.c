@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <assert.h>
 
+#define ERROR "mtail: illegal argument\nusage: ./mtail [file] [number (int)]\n"
 
 int 
 naif_tail
@@ -113,6 +114,7 @@ int
 main
 (int argc, const char * argv[])
 {
+  if (argc != 3) { printf(ERROR); return 255;} 
   naif_tail(atoi(argv[1]), argv[2]);
   return 0;
 }
